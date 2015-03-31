@@ -8,7 +8,7 @@ Created on Mar 22, 2015
 if __name__ == '__main__':
     pass
 
-import datetime
+#import datetime
 from datetime import datetime,date, timedelta
 import urllib,urllib2,json
 import numpy as np
@@ -45,7 +45,7 @@ def getLargeData(delay=0):
 
     end = date.today() - timedelta(days=delay*30)
     #print "Last Day: ",end
-    for i in range(5):
+    for i in range(3):
         start = end - timedelta(days=10)
         candles = getData(start,end,200)
         #print "----------:"len(candles)
