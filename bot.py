@@ -35,7 +35,7 @@ def getData(start,end,count):
     data = urllib.urlencode(values)
     reqUrl = url+"?"+data
     res = urllib2.urlopen(reqUrl).read()
-    print "Loading Data ..."
+    #print "Loading Data ..."
     candles = json.loads(res)
     return candles
 
@@ -119,7 +119,7 @@ class neuralNet:
     def trainOne(self,inputs,y):
         #print "--------",inputs,y
         x = np.array(inputs)
-        alpha = 1/float(self.count)
+        alpha = .001#1/float(self.count)
         pred = self.getPrediction(x)
         real = self.getReal(x[-1],y)
         error = real-pred
@@ -140,8 +140,10 @@ class neuralNet:
         #print "--------",x,y
         pred = self.getPrediction(x)
         real = self.getReal(x[-1],y)
-        error = real-pred
-        return abs(error)
+        if pred!=real : return 1
+        return 0
+        #error = real-pred
+        #return abs(error)
 
     def test(self):
         print "Testing..."
@@ -185,8 +187,10 @@ class neuralNet:
 
 nn = neuralNet(getLargeData(2),7)
 nn.train()
-#nn.getState()
-nn.test()
+
+
+nn.printState()
+#nn.test()
 nn.testData(getLargeData())
 
 

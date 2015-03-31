@@ -35,7 +35,7 @@ def getData(start,end,count):
     data = urllib.urlencode(values)
     reqUrl = url+"?"+data
     res = urllib2.urlopen(reqUrl).read()
-    print "Loading Data ..."
+    #print "Loading Data ..."
     candles = json.loads(res)
     return candles
 
@@ -54,14 +54,26 @@ def getLargeData(delay=0):
         end = start
     return data
 
+# Converts a time series sequence into the X,Y format
+def reshapeData(sequence,size):
+    print "Reshaping Data ..."
+    count = len(sequence)
+    x =[]
+    y =[]
+    for i in range(count-size):
+        subSequence = sequence[i:i+size]
+        output = sequence[i+size]
+        #print subSequence,output
+        x.append(subSequence)
+        y.append(output)
+    return x,y
 
 
 class neuralNet:
     weigth = []
-    sequence = []
     size = 0
     count = 0
-    def __init__(self, count, size):
+    def __init__(self,size):
 
         if len(sequence)==0:
             print "No Data"
@@ -69,7 +81,6 @@ class neuralNet:
 
         self.weight = np.zeros(size)
         #self.weight = np.ones(size)
-        self. sequence = sequence
         self. size = size
         self.count = 0
         self.printState()
@@ -79,7 +90,6 @@ class neuralNet:
         print "Size of X:",self.size
         print "Count of X:",self.count
         print "Weight:",self.weight
-        #print "Sequence:",self.sequence
         print "==============="
 
     # can be considered activation function
@@ -103,7 +113,7 @@ class neuralNet:
     def trainOne(self,inputs,y):
         #print "--------",inputs,y
         x = np.array(inputs)
-        alpha = 1/float(self.count)
+        alpha = .001 #1/float(self.size)
         pred = self.getPrediction(x)
         real = self.getReal(x[-1],y)
         error = real-pred
@@ -125,8 +135,11 @@ class neuralNet:
         #print "--------",x,y
         pred = self.getPrediction(x)
         real = self.getReal(x[-1],y)
-        error = real-pred
-        return abs(error)
+        if pred!=real : return 1
+        return 0
+        #error = (real-pred)
+        #print "error rate:",error
+        #return abs(error)
 
     def test(self,x,y):
         print "Testing...dataSeq..."
@@ -147,29 +160,19 @@ class neuralNet:
 
 
 
+
+
+
 # Main
 # ===========
+size = 7
+sequence = getLargeData(2)
+dataX,dataY  = reshapeData(sequence,size)
 
-nn = neuralNet(7)
-nn.train(getLargeData(2))
-#nn.getState()
-nn.test()
-nn.testData(getLargeData())
-
-
-
-# Misc Fucntions
-# ==============
-
-def reshapeData(sequence,size):
-    count = len(sequence)
-    x =[]
-    y =[]
-    for i in range(count-size):
-        subSequence = sequence[i:i+size]
-        output = sequence[i+size]
-        #print subSequence,output
-        x.append(subSequence)
-        y.append(output)
-    return x,y
+nn = neuralNet(size)
+nn.train(dataX,dataY)
+nn.printState()
+sequence = getLargeData()
+dataX,dataY  = reshapeData(sequence,size)
+nn.test(dataX,dataY)
 
