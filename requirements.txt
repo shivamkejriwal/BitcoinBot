@@ -54,7 +54,7 @@ pytz==2014.10
 pyxdg==0.25
 reportlab==3.0
 requests==2.2.1
-rsa==3.1.4
+rsa==4.7
 scikit-learn==0.15.2
 scipy==0.15.1
 sessioninstaller==0.0.0
